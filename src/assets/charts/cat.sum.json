@@ -39,7 +39,8 @@
     "mark": "bar",
     "encoding": {
       "x": {"field": "a", "type": "ordinal"},
-      "y": {"aggregate": "sum", "field": "b", "type": "quantitative"}
+      "y": {"aggregate": "sum", "field": "b", "type": "quantitative"},
+      "tooltip": {"field": "b", "type": "quantitative"}
     }
   }]
 }

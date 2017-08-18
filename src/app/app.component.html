@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <div class="row py-2">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">Source Charts</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <select id="datasetSelect"
+                                class="form-control"
+                                [(ngModel)]="selectedDataset"
+                                (ngModelChange)="loadDataset($event)">
+                            <option selected disabled [ngValue]=null>Select a Dataset</option>
+                            <option *ngFor="let dataset of datasets" [ngValue]="dataset">
+                                {{dataset.name}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="card my-2" *ngFor="let chart of charts">
+                        <div class="card-header pb-0">
+                            <label><input type="checkbox" [(ngModel)]="chart.selected" (ngModelChange)="selectChart($event)"> {{chart.name}}</label>
+                        </div>
+                        <div class="card-body">
+                            <div vegaLiteChart [id]="chart.id" [spec]="chart.spec"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">Reulsts</div>
+                <div class="card-body">
+                    <div id="chart_result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
