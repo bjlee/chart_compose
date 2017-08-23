@@ -1,0 +1,16 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "description": "A simple bar chart with embedded data.",
+    "data": {
+        "values": [
+            {"a": "B","b": 20}, {"a": "C","b": 40},
+            {"a": "E","b": 39}, {"a": "F","b": 67},
+            {"a": "J","b": 40}, {"a": "L","b": 25}
+        ]
+    },
+    "mark": "bar",
+    "encoding": {
+        "x": {"field": "a", "type": "ordinal"},
+        "y": {"field": "b", "type": "quantitative"}
+    }
+  }

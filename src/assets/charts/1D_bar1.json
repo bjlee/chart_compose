@@ -1,0 +1,19 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "data": { "url": "https://vega.github.io/editor/data/github.csv"},
+    "name": "Day",
+    "mark": "bar",
+    "encoding": {
+      "y": {
+        "field": "count",
+        "type": "quantitative",
+        "aggregate": "sum"
+      },
+      "x": {
+        "field": "time",
+        "type": "temporal",
+        "timeUnit": "day"
+      }
+    }
+  }
+  

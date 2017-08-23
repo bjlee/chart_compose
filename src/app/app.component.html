@@ -15,12 +15,14 @@
                             </option>
                         </select>
                     </div>
-                    <div class="card my-2" *ngFor="let chart of charts">
-                        <div class="card-header pb-0">
-                            <label><input type="checkbox" [(ngModel)]="chart.selected" (ngModelChange)="selectChart($event)"> {{chart.name}}</label>
-                        </div>
-                        <div class="card-body">
-                            <div vegaLiteChart [id]="chart.id" [spec]="chart.spec"></div>
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="card m-2" *ngFor="let chart of sourceCharts">
+                            <div class="card-header pb-0">
+                                <label><input type="checkbox" [(ngModel)]="chart.selected" (ngModelChange)="selectChart($event)"> {{chart.name}}</label>
+                            </div>
+                            <div class="card-body pl-0 pb-0">
+                                <div vegaLiteChart [id]="chart.id" [spec]="chart.spec" (onRendered)="onChartRendered(chart, $event)">></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -30,7 +32,13 @@
             <div class="card">
                 <div class="card-header">Reulsts</div>
                 <div class="card-body">
-                    <div id="chart_result"></div>
+                    <div class="d-flex flex-row flex-wrap justify-content-center">
+                        <div class="card m-2" *ngFor="let chart of resultCharts">
+                            <div class="card-body pl-0 pb-0">
+                                <div vegaLiteChart [id]="chart.id" [spec]="chart.spec"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

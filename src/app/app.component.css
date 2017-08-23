@@ -6,7 +6,3 @@ html, body{
 a.active {
   background-color: gray;
 }
-
-.card-columns {
-  column-count: 3;
-}

@@ -1,0 +1,12 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "name": "AAPL",
+    "data": {"url": "https://vega.github.io/editor/data/stocks.csv"},
+    "transform": [{"filter": "datum.symbol==='AAPL'"}],
+    "mark": "line",
+    "encoding": {
+      "x": {"field": "date", "type": "temporal"},
+      "y": {"field": "price", "type": "quantitative"}
+    }
+  }
+  

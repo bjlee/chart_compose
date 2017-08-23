@@ -1,0 +1,12 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "name": "MSFT",
+    "data": {"url": "https://vega.github.io/editor/data/stocks.csv"},
+    "transform": [{"filter": "datum.symbol==='MSFT'"}],
+    "mark": "line",
+    "encoding": {
+      "x": {"field": "date", "type": "temporal"},
+      "y": {"field": "price", "type": "quantitative"}
+    }
+  }
+  

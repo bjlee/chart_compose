@@ -6,12 +6,13 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import { Http, Response} from '@angular/http';
+
+import { Http } from '@angular/http';
+import { AppState } from './app.service';
+import * as vegaliteChart from './chart/vegalite.chart';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-
-import { AppState } from './app.service';
 import * as _ from 'lodash';
 
 interface Dataset {
@@ -23,11 +24,10 @@ interface Chart {
   name: string;
   id: string;
   spec: any;
-  selected: boolean;
+  selected?: boolean;
+  view?: any;
 }
 
-let vega = require('vega');
-let vega_embed = require('vega-embed');
 /**
  * App Component
  * Top Level Component
@@ -35,15 +35,14 @@ let vega_embed = require('vega-embed');
 @Component({
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
-  styleUrls: [
-    './app.component.css'
-  ],
+  styleUrls: ['./app.component.css'],
   templateUrl: 'app.component.html'
 })
 export class AppComponent implements OnInit {
   public selectedDataset: Dataset;
   public datasets: Dataset[];
-  public charts: Chart[];
+  public sourceCharts: Chart[];
+  public resultCharts: Chart[];
   private chartId: number = 0;
 
   constructor(
@@ -55,23 +54,29 @@ export class AppComponent implements OnInit {
     console.log('Initial App State', this.appState.state);
 
     this.selectedDataset = null;
-
     this.http.get('assets/charts/datasets.json')
-      .map(res => res.json())
-      .subscribe(res => this.datasets = res);
+        .map(res => res.json())
+        .subscribe(res => this.datasets = res);
   }
 
   public loadDataset(event: Dataset) {
-    this.charts = [];
+    this.sourceCharts = [];
+    this.resultCharts = [];
     event.files.forEach(d => {
       this.http.get(`assets/charts/${d}`)
         .map(res => res.json())
         .subscribe(res => {
-          this.charts.push({
-            name: d,
-            id: `chart-${this.chartId}`,
-            spec: res,
-            selected: false,
+          res.width = 180;
+          res.height = 180;
+
+          if (_.isUndefined(res.name)) {
+            res.name = _(d).split(".").dropRight().join(' ');
+          }
+          this.sourceCharts.push({
+              name: res.name,
+              id: `chart-${this.chartId}`,
+              spec: res,
+              selected: false,
           });
           this.chartId++;
         });
@@ -79,121 +84,63 @@ export class AppComponent implements OnInit {
   }
 
   public selectChart(event: any) {
-    let selectedCharts = this.charts.filter(d => d.selected);
-    let specs = _.map(selectedCharts, d => d.spec);
-    vega_embed("#chart_result", {
-        "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-        "vconcat": [
-          accumulateCategoricalValues(specs),
-          stackCategoricalValues(specs),
-          groupCategoricalValues(specs),
-          scatterplotCategoricalValues(specs),
-          //densityplotCategoricalValues(specs)
-        ]
-      }, {
-        actions: false
-    });
-  }
-}
-
-function accumulateCategoricalValues(specs: any[]): any {
-  return {
-    data: { values: _.flatMap(specs, d => d.data.values) },
-    mark: "bar",
-    encoding: {
-      x: specs[0].encoding.x,
-      y: _.assign(specs[0].encoding.y, {"aggregate": "sum"})
+    let charts = _(this.sourceCharts)
+                  .filter(d => d.selected)
+                  .map(d => ({
+                      spec: d.spec,
+                      values: d.view.data('source_0'),
+                  }))
+                  .value();
+    
+    if (charts.length < 2) {
+      return;
     }
-  }
-}
 
-function stackCategoricalValues(specs: any[]): any {
-  return {
-    data: { 
-      values: _.flatMap(specs, (d, i) => 
-        _.map(d.data.values, v => 
-          _.assign(v, {"$chart_idx": i})))
-    },
-    mark: "bar",
-    encoding: {
-      x: specs[0].encoding.x,
-      y: _.assign(specs[0].encoding.y, {"aggregate": "sum"}),
-      color: { 
-        field: "$chart_idx",
-        type: "nominal"
-      }
-    }
-  }
-}
+    let results = [];
+    if (this.selectedDataset.name === "1D + 1D = ?") {
 
-function groupCategoricalValues(specs: any[]): any {
-  return {
-    data: { 
-      values: _.flatMap(specs, (d, i) => 
-        _.map(d.data.values, v => 
-          _.assign(v, {"$chart_idx": i})))
-    },
-    mark: "bar",
-    encoding: {
-      column: specs[0].encoding.x,
-      x: {
-        field: "$chart_idx",
-        type: "nominal",
-        scale: {rangeStep: 12},
-        axis: {title: ""}
-      },
-      y: _.assign(specs[0].encoding.y, {"aggregate": "sum"}),
-      color: { 
-        field: "$chart_idx",
-        type: "nominal"
-      }
+      let data = {
+          values: this.sourceCharts[0].view._runtime.data.source_0.input.value,
+      };
+      
+      let width = 480;
+      let height = 200;
+      results = [{
+          $schema: "https://vega.github.io/schema/vega-lite/v2.json",
+          width,
+          height,
+          data,
+          mark: "circle",
+          encoding: {
+            y: charts[0].spec.encoding.x,
+            x: charts[1].spec.encoding.x,
+            size: charts[0].spec.encoding.y
+          }
+        }, {
+          $schema: "https://vega.github.io/schema/vega-lite/v2.json",
+          width,
+          height,
+          data,
+          mark: "rect",
+          encoding: {
+            y: charts[0].spec.encoding.x,
+            x: charts[1].spec.encoding.x,
+            color: _.assign({}, charts[0].spec.encoding.y, {"scale": { "scheme": "greenblue"}})
+          }
+        }];
+    } else {
+      results = vegaliteChart.mergeCharts(charts);
     }
-  }
-}
 
-function scatterplotCategoricalValues(specs: any[]): any {
-  return {
-    data: { 
-      values: _.flatMap(specs, (d, i) => 
-        _.map(d.data.values, v => 
-          _.assign(v, {"$chart_idx": i})))
-    },
-    mark: "point",
-    encoding: {
-      x: specs[0].encoding.x,
-      y: specs[0].encoding.y,
-      color: { 
-        field: "$chart_idx",
-        type: "nominal"
-      }
-    }
+    this.resultCharts = _.map(results, (d, i) => ({
+        name: '',
+        id: `chart-result-${i}`,
+        spec: d,
+    }));
   }
-}
 
-function densityplotCategoricalValues(specs: any[]): any {
-  return {
-    data: { 
-      values: _.flatMap(specs, (d, i) => 
-        _.map(d.data.values, v => 
-          _.assign(v, {"$chart_idx": i})))
-    },
-    mark: "rect",
-    encoding: {
-      x: specs[0].encoding.x,
-      y: _.assign(specs[0].encoding.y, {
-        bin: { maxbins: 10 }
-      }),
-      color: { 
-        aggregate: "count",
-        type: "quantitative"
-      }
-    },
-    config: {
-      range: {
-        heatmap: { scheme: "greenblue" }
-      },
-      cell: { stroke: "transparent" }
-    }
+  public onChartRendered(chart: Chart, view: any) {
+    chart.view = view;
   }
 }
 

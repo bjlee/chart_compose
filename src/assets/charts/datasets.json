@@ -1,15 +1,66 @@
 [{
-    "name": "Bar Charts",
+    "name": "Bar Charts - Equal Categorical Domain",
     "files": [
-        "bar1.json",
-        "bar2.json",
-        "bar3.json"
+        "bar1_1.json",
+        "bar1_2.json",
+        "bar1_3.json",
+        "bar1_4.json"
     ]
 }, {
-    "name": "Line Charts",
+    "name": "Bar Charts - Compatible Categorical Domain",
     "files": [
-        "line1.json",
-        "line2.json",
-        "line3.json"
+        "bar2_1.json",
+        "bar2_2.json",
+        "bar2_3.json",
+        "bar2_4.json"
+    ]
+}, {
+    "name": "Temporal Line Charts",
+    "files": [
+        "temporal_line1_1.json",
+        "temporal_line1_2.json",
+        "temporal_line1_3.json",
+        "temporal_line1_4.json",
+        "temporal_line1_5.json"
+    ]
+}, {
+    "name": "Temporal Line Charts - diff gran",
+    "files": [
+        "temporal_line2_1.json",
+        "temporal_line2_2.json",
+        "temporal_line2_3.json",
+        "temporal_line2_4.json",
+        "temporal_line2_5.json"
+    ]
+}, {
+    "name": "Area Charts",
+    "files": [
+        "area1.json",
+        "area2.json",
+        "area3.json",
+        "area4.json"
+    ]
+}, {
+    "name": "Scatter Plots",
+    "files": [
+        "scatterplot1.json",
+        "scatterplot2.json",
+        "scatterplot3.json"
+    ]
+}, {
+    "name": "Multiple Charts",
+    "files": [
+        "mc_bar1.json",
+        "mc_bar2.json",
+        "mc_line1.json",
+        "mc_line2.json",
+        "mc_bubble1.json",
+        "mc_bubble2.json"
+    ]
+}, {
+    "name": "1D + 1D = ?",
+    "files": [
+        "1D_bar1.json",
+        "1D_bar2.json"
     ]
 }]

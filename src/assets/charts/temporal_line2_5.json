@@ -1,0 +1,27 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "name": "IBM",
+  "data": {"url": "https://vega.github.io/editor/data/stocks.csv"},
+  "transform": [{
+      "filter": "datum.symbol==='IBM'"
+    }, {
+      "timeUnit": "yearmonth",
+      "field": "date",
+      "as": "_DATE"
+    }, {
+      "calculate": "datum.price",
+      "as": "_PRICE"
+    }],
+  "mark": "line",
+  "encoding": {
+    "x": {
+      "field": "_DATE",
+      "type": "temporal"
+    },
+    "y": {
+      "field": "_PRICE", 
+      "type": "quantitative"
+    }
+  }
+}
+

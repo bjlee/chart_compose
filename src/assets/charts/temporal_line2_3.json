@@ -1,0 +1,30 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+  "name": "AAPL",
+  "data": {"url": "https://vega.github.io/editor/data/stocks.csv"},
+  "transform": [{
+      "filter": "datum.symbol==='AAPL'"
+    }, {
+      "timeUnit": "year",
+      "field": "date",
+      "as": "_DATE"
+    }, {
+      "summarize": [{
+        "aggregate": "mean",
+        "field": "price",
+        "as": "_PRICE"
+      }],
+      "groupby": ["_DATE"]
+    }],
+  "mark": "line",
+  "encoding": {
+    "x": {
+      "field": "_DATE",
+      "type": "temporal"
+    },
+    "y": {
+      "field": "_PRICE", 
+      "type": "quantitative"
+    }
+  }
+}

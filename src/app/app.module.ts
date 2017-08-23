@@ -28,7 +28,7 @@ import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
-import { VegaLiteChartDirective } from './vegalite.chart.directive';
+import { VegaLiteChartDirective } from './chart/vegalite.chart.directive';
 
 import '../styles/styles.scss';
 import '../styles/headings.css';
